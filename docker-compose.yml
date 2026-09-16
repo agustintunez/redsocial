@@ -1,0 +1,42 @@
+YAML 
+version: '3.8' 
+ 
+services: 
+  postgres: 
+    image: postgres:15-alpine 
+    container_name: social_db 
+    environment: 
+      POSTGRES_DB: socialdb 
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: postgrespassword 
+    ports: 
+      - "5432:5432" 
+    volumes: 
+      - pgdata:/var/lib/postgresql/data 
+ 
+  backend: 
+    build: 
+      context: ./backend 
+      dockerfile: Dockerfile 
+    container_name: social_backend 
+    ports: 
+      - "5000:8080" 
+    environment: 
+      - 
+ConnectionStrings__DefaultConnection=Host=postgres;Database=socialdb;Username=postgre
+s;Password=postgrespassword 
+    depends_on: 
+      - postgres 
+ 
+  frontend: 
+    build: 
+      context: ./frontend 
+      dockerfile: Dockerfile 
+    container_name: social_frontend 
+    ports: 
+      - "3000:80" 
+    depends_on: 
+      - backend 
+ 
+volumes: 
+  pgdata:
